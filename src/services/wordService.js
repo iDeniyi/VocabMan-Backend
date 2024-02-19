@@ -3,6 +3,8 @@ require("dotenv").config();
 const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
+const { format } = require("date-fns");
+const { db, admin } = require("../config/firebaseAdminSetup");
 
 const wordsFilePath = path.join(__dirname, "..", "data", "words.json");
 let wordOfTheDay = {};
@@ -70,13 +72,47 @@ function structureObject(word, details) {
 }
 
 async function updateWordOfTheDay() {
-    randomWord = getRandomWord();
+    const randomWord = getRandomWord();
+
     const wordDetails = await getWordDetails(randomWord);
-    wordOfTheDay = structureObject(randomWord, wordDetails);
-    return wordOfTheDay;
+    const formattedDate = format(new Date(), "dd/MMMM/yyyy");
+
+    const wordOfTheDayWithDate = {
+        ...structureObject(randomWord, wordDetails),
+        date: formattedDate,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    try {
+        await db.collection("wordsOfTheDay").add(wordOfTheDayWithDate);
+        console.log(
+            "Word of the Day updated successfully:",
+            wordOfTheDayWithDate
+        );
+    } catch (error) {
+        console.error("Failed to update Word of the Day in Firestore:", error);
+    }
+
+    return wordOfTheDayWithDate;
 }
 
 async function getWordOfTheDay() {
-    return wordOfTheDay;
+    try {
+        const latestWordSnapshot = await db
+            .collection("wordsOfTheDay")
+            .orderBy("createdAt", "desc")
+            .limit(1)
+            .get();
+
+        if (!latestWordSnapshot.empty) {
+            const latestWordDoc = latestWordSnapshot.docs[0];
+            return { id: latestWordDoc.id, ...latestWordDoc.data() };
+        } else {
+            return {};
+        }
+    } catch (error) {
+        console.error("Error fetching the latest word of the day:", error);
+        return {};
+    }
 }
 module.exports = { getWordOfTheDay, updateWordOfTheDay };
