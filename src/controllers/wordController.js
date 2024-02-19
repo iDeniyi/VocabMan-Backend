@@ -9,12 +9,4 @@ const getWordOfTheDay = async (req, res) => {
     }
 };
 
-const updateWordOfTheDay = async (req, res) => {
-    try {
-        await wordService.updateWordOfTheDay();
-        res.json("word updated");
-    } catch (error) {
-        console.error(error);
-    }
-};
-module.exports = { getWordOfTheDay, updateWordOfTheDay };
+module.exports = { getWordOfTheDay };
