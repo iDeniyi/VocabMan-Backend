@@ -85,6 +85,7 @@ async function initializeWordsBuffer() {
         try {
             const word = await generateWord();
             await db.collection("words").doc(formattedDate).set(word);
+            render;
             console.log(`Word for ${formattedDate} added successfully.`);
         } catch (error) {
             console.error(`Error adding word for ${formattedDate}:`, error);
