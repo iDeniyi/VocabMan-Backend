@@ -2,9 +2,9 @@ require("dotenv").config();
 const wordService = require("../services/wordService");
 
 wordService
-    .updateWordOfTheDay()
-    .then((wordOfTheDay) => {
-        console.log("Word of the Day updated successfully:", wordOfTheDay);
+    .updateWordsBuffer()
+    .then(() => {
+        console.log("Word of the Day updated successfully");
         process.exit(0);
     })
     .catch((error) => {

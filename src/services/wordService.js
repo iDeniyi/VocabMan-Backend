@@ -3,11 +3,11 @@ require("dotenv").config();
 const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
-const { format } = require("date-fns");
-const { db, admin } = require("../config/firebaseAdminSetup");
+
+const { format, addDays } = require("date-fns");
+const { db } = require("../config/firebaseAdminSetup");
 
 const wordsFilePath = path.join(__dirname, "..", "data", "words.json");
-let wordOfTheDay = {};
 
 function getRandomWord() {
     try {
@@ -71,48 +71,35 @@ function structureObject(word, details) {
     return wordOfTheDay;
 }
 
-async function updateWordOfTheDay() {
+async function generateWord() {
     const randomWord = getRandomWord();
-
     const wordDetails = await getWordDetails(randomWord);
-    const formattedDate = format(new Date(), "dd/MMMM/yyyy");
-
-    const wordOfTheDayWithDate = {
-        ...structureObject(randomWord, wordDetails),
-        date: formattedDate,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
-
-    try {
-        await db.collection("wordsOfTheDay").add(wordOfTheDayWithDate);
-        console.log(
-            "Word of the Day updated successfully:",
-            wordOfTheDayWithDate
-        );
-    } catch (error) {
-        console.error("Failed to update Word of the Day in Firestore:", error);
-    }
-
-    return wordOfTheDayWithDate;
+    return structureObject(randomWord, wordDetails);
 }
 
-async function getWordOfTheDay() {
-    try {
-        const latestWordSnapshot = await db
-            .collection("wordsOfTheDay")
-            .orderBy("createdAt", "desc")
-            .limit(1)
-            .get();
-
-        if (!latestWordSnapshot.empty) {
-            const latestWordDoc = latestWordSnapshot.docs[0];
-            return { id: latestWordDoc.id, ...latestWordDoc.data() };
-        } else {
-            return {};
+async function initializeWordsBuffer() {
+    const today = new Date();
+    for (let i = 0; i <= 3; i++) {
+        const date = addDays(today, i);
+        const formattedDate = format(date, "yyyy-MM-dd");
+        try {
+            const word = await generateWord();
+            await db.collection("words").doc(formattedDate).set(word);
+            console.log(`Word for ${formattedDate} added successfully.`);
+        } catch (error) {
+            console.error(`Error adding word for ${formattedDate}:`, error);
         }
-    } catch (error) {
-        console.error("Error fetching the latest word of the day:", error);
-        return {};
     }
 }
-module.exports = { getWordOfTheDay, updateWordOfTheDay };
+
+async function updateWordsBuffer() {
+    const threeDaysFromNow = addDays(new Date(), 3);
+    const formattedDate = format(threeDaysFromNow, "yyyy-MM-dd");
+    try {
+        const word = await generateWord();
+        await db.collection("words").doc(formattedDate).set(word);
+        console.log(`Word for ${formattedDate} added successfully.`);
+    } catch (error) {
+        console.error(`Error adding word for ${formattedDate}:`, error);
+    }
+}
