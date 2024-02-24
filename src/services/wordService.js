@@ -104,3 +104,5 @@ async function updateWordsBuffer() {
         console.error(`Error adding word for ${formattedDate}:`, error);
     }
 }
+
+module.exports = { initializeWordsBuffer, updateWordsBuffer };
