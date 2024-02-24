@@ -15,6 +15,7 @@ function getRandomWord() {
         const data = JSON.parse(dataString);
         const words = data.words;
         const randomWord = words[Math.floor(Math.random() * words.length)];
+        console.log(randomWord);
         return randomWord.word;
     } catch (error) {
         console.error("Error reading file or selecting a random word:", error);
@@ -85,7 +86,6 @@ async function initializeWordsBuffer() {
         try {
             const word = await generateWord();
             await db.collection("words").doc(formattedDate).set(word);
-            render;
             console.log(`Word for ${formattedDate} added successfully.`);
         } catch (error) {
             console.error(`Error adding word for ${formattedDate}:`, error);
