@@ -63,7 +63,7 @@ async function getWordDetails(word) {
 
 function structureObject(word, details) {
     wordOfTheDay = {
-        word: word,
+        word: word.toUpperCase(),
         definition: details.definitions[0],
         synonyms: details.synonyms,
         antonyms: details.antonyms,
