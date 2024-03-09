@@ -4,10 +4,10 @@ const wordService = require("../services/wordService");
 wordService
     .updateWordsBuffer()
     .then(() => {
-        console.log("Word of the Day updated successfully");
+        console.log("Words buffer updated successfully");
         process.exit(0);
     })
     .catch((error) => {
-        console.error("Failed to update Word of the Day:", error);
+        console.error("Failed to update Words buffer", error);
         process.exit(1);
     });

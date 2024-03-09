@@ -84,7 +84,7 @@ async function initializeWordsBuffer() {
         const date = addDays(today, i);
         const formattedDate = format(date, "yyyy-MM-dd");
         try {
-            const word = await generateWord();
+            const word = getRandomWord();
             await db.collection("words").doc(formattedDate).set(word);
             console.log(`Word for ${formattedDate} added successfully.`);
         } catch (error) {
@@ -97,7 +97,7 @@ async function updateWordsBuffer() {
     const threeDaysFromNow = addDays(new Date(), 3);
     const formattedDate = format(threeDaysFromNow, "yyyy-MM-dd");
     try {
-        const word = await generateWord();
+        const word = getRandomWord();
         await db.collection("words").doc(formattedDate).set(word);
         console.log(`Word for ${formattedDate} added successfully.`);
     } catch (error) {
@@ -105,4 +105,38 @@ async function updateWordsBuffer() {
     }
 }
 
-module.exports = { initializeWordsBuffer, updateWordsBuffer };
+async function setWordOfTheDay() {
+    const today = new Date();
+    const formattedDate = format(today, "yyyy-MM-dd");
+
+    try {
+        const wordDocSnapshot = await db
+            .collection("words")
+            .doc(formattedDate)
+            .get();
+
+        if (!wordDocSnapshot.exists) {
+            console.log(`No word found for ${formattedDate}`);
+            return;
+        }
+
+        const wordData = wordDocSnapshot.data();
+        const wordOfTheDay = wordData.word;
+
+        const wordDetails = await getWordDetails(wordOfTheDay);
+
+        await db
+            .collection("wordOfTheDay")
+            .doc("wordOfTheDay")
+            .set(wordDetails);
+
+        console.log(`Word of the day for ${formattedDate} set successfully.`);
+    } catch (error) {
+        console.error(
+            `Error setting word of the day for ${formattedDate}:`,
+            error
+        );
+    }
+}
+
+module.exports = { initializeWordsBuffer, updateWordsBuffer, setWordOfTheDay };
