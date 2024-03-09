@@ -15,8 +15,7 @@ function getRandomWord() {
         const data = JSON.parse(dataString);
         const words = data.words;
         const randomWord = words[Math.floor(Math.random() * words.length)];
-        console.log(randomWord);
-        return randomWord.word;
+        return randomWord;
     } catch (error) {
         console.error("Error reading file or selecting a random word:", error);
     }
@@ -72,12 +71,6 @@ function structureObject(word, details) {
     return wordOfTheDay;
 }
 
-async function generateWord() {
-    const randomWord = getRandomWord();
-    const wordDetails = await getWordDetails(randomWord);
-    return structureObject(randomWord, wordDetails);
-}
-
 async function initializeWordsBuffer() {
     const today = new Date();
     for (let i = 0; i <= 3; i++) {
@@ -121,14 +114,15 @@ async function setWordOfTheDay() {
         }
 
         const wordData = wordDocSnapshot.data();
-        const wordOfTheDay = wordData.word;
+        const word = wordData.word;
 
-        const wordDetails = await getWordDetails(wordOfTheDay);
+        const wordDetails = await getWordDetails(word);
+        const wordOfTheDay = structureObject(word, wordDetails);
 
         await db
             .collection("wordOfTheDay")
             .doc("wordOfTheDay")
-            .set(wordDetails);
+            .set(wordOfTheDay);
 
         console.log(`Word of the day for ${formattedDate} set successfully.`);
     } catch (error) {
