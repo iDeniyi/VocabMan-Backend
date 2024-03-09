@@ -8,6 +8,7 @@
         "start": "node src/index.js",
         "init-words": "node ./src/scripts/initializeWordsBuffer.js",
         "set-word-of-day": "node ./src/scripts/setWordOfTheDay.js",
+        "update-words": "node ./src/scripts/updateWordsBuffer.js",
         "dev": "nodemon src/index.js"
     },
     "keywords": [],
