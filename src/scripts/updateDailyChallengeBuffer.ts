@@ -1,8 +1,6 @@
-require("dotenv").config();
-const wordService = require("../services/wordService");
+import { updateDailyChallengeBuffer } from "../services/challengeService";
 
-wordService
-    .updateWordsBuffer()
+updateDailyChallengeBuffer()
     .then(() => {
         console.log("Words buffer updated successfully");
         process.exit(0);

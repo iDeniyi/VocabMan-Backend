@@ -1,8 +1,6 @@
-require("dotenv").config();
-const wordService = require("../services/wordService");
+import { initializeDailyChallengeBuffer } from "../services/challengeService";
 
-wordService
-    .initializeWordsBuffer()
+initializeDailyChallengeBuffer()
     .then(() => {
         console.log("Words buffer initialized successfully.");
         process.exit(0);
