@@ -10,7 +10,7 @@ import {
 export const register = async (req: Request, res: Response) => {
     try {
         const { username, email, password } = req.body;
-        const hashedPassword = await hashPassword(password);
+        const hashedPassword: string = await hashPassword(password);
 
         const newUser = new User({
             username,
@@ -27,7 +27,11 @@ export const register = async (req: Request, res: Response) => {
             token,
         });
     } catch (error: any) {
-        res.status(500).send(error.message);
+        if (error.code === 11000) {
+            res.status(409).send("Username or email already exists.");
+        } else {
+            res.status(500).send("Internal server error.");
+        }
     }
 };
 

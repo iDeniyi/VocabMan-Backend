@@ -53,5 +53,16 @@ export const filterChallengeByDate = async (date: Date) => {
         },
         { $unwind: "$wordDetails" },
     ]);
+
+    // capitalize the word
+    if (
+        challenges[0] &&
+        challenges[0].wordDetails &&
+        challenges[0].wordDetails.word
+    ) {
+        challenges[0].wordDetails.word =
+            challenges[0].wordDetails.word.toUpperCase();
+    }
+
     return challenges[0];
 };

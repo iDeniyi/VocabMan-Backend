@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { logUserActivity } from "../controllers/activityController";
+import {
+    logUserActivity,
+    updateNewWord,
+} from "../controllers/activityController";
 
 const router = Router();
 
 router.post("/", logUserActivity);
+router.post("/update-new-word", updateNewWord);
 
 export default router;

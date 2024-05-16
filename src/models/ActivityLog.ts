@@ -1,9 +1,9 @@
 import { Schema, model } from "mongoose";
 
-interface IActivityLog {
+export interface IActivityLog {
     dailyChallengeId: Schema.Types.ObjectId;
     userId: Schema.Types.ObjectId;
-    stars: Number;
+    rating: Number;
     newWord: Boolean;
     date: Date;
 }
@@ -19,9 +19,14 @@ const activityLogSchema = new Schema<IActivityLog>({
         required: true,
         ref: "User",
     },
-    stars: {
+    rating: {
         type: Number,
+        default: 0,
         required: true,
+    },
+    newWord: {
+        type: Boolean,
+        default: true,
     },
     date: {
         type: Date,
