@@ -6,7 +6,7 @@ import { connectDB } from "./config/dbConfig";
 import { initializeDailyChallengeBuffer } from "./services/challengeService";
 
 const port = process.env.PORT!;
-const uri = process.env.MONGO_URI!;
+const uri = process.env.MONGO_URI_PROD!;
 
 async function startServer() {
     try {
