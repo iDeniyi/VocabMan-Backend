@@ -24,5 +24,6 @@ export const constructUserResponse = (user: IUser) => {
         createdAt: format(new Date(user.createdAt), "yyyy-MM-dd"),
         currentStreak: user.streak.count,
         longestStreak: user.streak.longest,
+        rating: user.rating,
     };
 };
