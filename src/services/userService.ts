@@ -10,7 +10,7 @@ export const hashPassword = async (password: string) => {
 
 export const createUserToken = (user: IUser) => {
     return jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
-        expiresIn: "1h",
+        expiresIn: "30d",
     });
 };
 
