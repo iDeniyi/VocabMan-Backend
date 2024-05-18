@@ -38,7 +38,7 @@ export const initializeDailyChallengeBuffer = async () => {
 };
 
 export const updateDailyChallengeBuffer = async () => {
-    const threeDaysFromNow = addDays(new Date(), 3);
+    const threeDaysFromNow = addDays(new Date(), 4);
     await manageDailyChallenge(threeDaysFromNow);
 };
 

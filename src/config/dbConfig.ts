@@ -9,4 +9,4 @@ export const connectDB = async (uri: string) => {
     }
 };
 
-export const closeDB = async () => mongoose.disconnect();
+export const disconnectDB = async () => mongoose.disconnect();
