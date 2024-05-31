@@ -7,6 +7,7 @@
         "build": "rimraf dist && tsc",
         "start": "npm run build && node dist/index.js",
         "update-words": "TS_NODE_PREFER_TS_EXTS=true npx ts-node src/scripts/updateDailyChallengeBuffer.ts",
+        "manage-streaks": "TS_NODE_PREFER_TS_EXTS=true npx ts-node src/scripts/manageUserStreaks.ts",
         "dev": "nodemon --exec 'TS_NODE_PREFER_TS_EXTS=true ts-node' src/index.ts"
     },
     "keywords": [],
