@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { format } from "date-fns";
+import mongoose from "mongoose";
 
-import { IUser } from "../models/User";
+import User, { IUser } from "../models/User";
 
 export const hashPassword = async (password: string) => {
     return await bcrypt.hash(password, 10);
@@ -26,4 +27,27 @@ export const constructUserResponse = (user: IUser) => {
         longestStreak: user.streak.longest,
         rating: user.rating,
     };
+};
+
+export const resetStreaks = async () => {
+    try {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+
+        const result = await User.updateMany(
+            {
+                "streak.lastActive": { $ne: null, $lt: yesterday },
+            },
+            {
+                $set: { "streak.count": 0 },
+            }
+        );
+
+        console.log(`Streaks reset for ${result.modifiedCount} users`);
+    } catch (error) {
+        console.error("Error resetting streaks:", error);
+    } finally {
+        mongoose.connection.close();
+    }
 };

@@ -1,8 +1,8 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 
 interface IStreak {
     count: number;
-    lastActive: Date;
+    lastActive: Date | null;
     longest: number;
 }
 
@@ -26,7 +26,7 @@ const userSchema = new Schema<IUser>({
     createdAt: { type: Date, default: Date.now },
     streak: {
         count: { type: Number, default: 0 },
-        lastActive: { type: Date, default: Date.now },
+        lastActive: { type: Date, default: null },
         longest: { type: Number, default: 0 },
     },
     rating: { type: Number, default: 0 },
@@ -35,19 +35,28 @@ const userSchema = new Schema<IUser>({
 
 userSchema.methods.updateStreak = async function () {
     const today = new Date();
-    if (this.streak.lastActive.toDateString() === today.toDateString()) {
-        return;
-    }
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
 
-    if (this.streak.lastActive.getDate() === today.getDate() - 1) {
-        this.streak.count++;
-        this.streak.lastActive = today;
+    if (this.streak.lastActive) {
+        if (this.streak.lastActive.toDateString() === today.toDateString()) {
+            return;
+        }
+
+        if (
+            this.streak.lastActive.toDateString() === yesterday.toDateString()
+        ) {
+            this.streak.count++;
+        } else {
+            this.streak.count = 1;
+        }
+
+        this.streak.longest = Math.max(this.streak.longest, this.streak.count);
     } else {
         this.streak.count = 1;
-        this.streak.lastActive = today;
-        this.streak.longest = Math.max(this.streak.longest, this.streak.count);
     }
 
+    this.streak.lastActive = today;
     await this.save();
 };
 
