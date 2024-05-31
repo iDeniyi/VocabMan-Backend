@@ -33,7 +33,7 @@ const userSchema = new Schema<IUser>({
     attempts: { type: Number, default: 0 },
 });
 
-userSchema.methods.updateStreak = function () {
+userSchema.methods.updateStreak = async function () {
     const today = new Date();
     if (this.streak.lastActive.toDateString() === today.toDateString()) {
         return;
@@ -48,14 +48,14 @@ userSchema.methods.updateStreak = function () {
         this.streak.longest = Math.max(this.streak.longest, this.streak.count);
     }
 
-    this.save();
+    await this.save();
 };
 
-userSchema.methods.updateRating = function (newRating: number) {
+userSchema.methods.updateRating = async function (newRating: number) {
     this.rating =
         (this.rating * this.attempts + newRating) / (this.attempts + 1);
     this.attempts++;
-    this.save();
+    await this.save();
 };
 
 const User = model<IUser>("User", userSchema);
