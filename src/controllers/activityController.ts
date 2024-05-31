@@ -5,6 +5,7 @@ import {
     createActivityLog,
     updateNewWordFlag,
 } from "../services/activityService";
+import { constructUserResponse } from "../services/userService";
 
 import User from "../models/User";
 
@@ -28,9 +29,8 @@ export const logUserActivity = async (req: Request, res: Response) => {
         user.updateStreak();
         user.updateRating(rating);
 
-        return res
-            .status(201)
-            .json({ message: "Activity logged successfully" });
+        const currentUser = constructUserResponse(user);
+        return res.status(201).json(currentUser);
     } catch (error) {
         console.error("Failed to log user activity:", error);
         return res.status(500).json({ message: "Internal server error" });
