@@ -33,7 +33,9 @@ export const resetStreaks = async () => {
     try {
         const today = new Date();
         const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
+        yesterday.setUTCDate(today.getUTCDate() - 1);
+
+        yesterday.setUTCHours(0, 0, 0, 0);
 
         const result = await User.updateMany(
             {

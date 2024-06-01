@@ -20,6 +20,7 @@ export const createActivityLog = async (
         dailyChallengeId: challengeId,
         userId,
         rating,
+        date: new Date().toISOString(),
     });
     await newActivity.save();
     return newActivity;

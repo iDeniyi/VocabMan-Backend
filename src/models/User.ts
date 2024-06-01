@@ -35,17 +35,20 @@ const userSchema = new Schema<IUser>({
 
 userSchema.methods.updateStreak = async function () {
     const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
+    today.setUTCHours(0, 0, 0, 0);
 
     if (this.streak.lastActive) {
-        if (this.streak.lastActive.toDateString() === today.toDateString()) {
+        const lastActiveDate = new Date(this.streak.lastActive);
+        lastActiveDate.setUTCHours(0, 0, 0, 0);
+
+        if (lastActiveDate.getTime() === today.getTime()) {
             return;
         }
 
-        if (
-            this.streak.lastActive.toDateString() === yesterday.toDateString()
-        ) {
+        const yesterday = new Date(today);
+        yesterday.setUTCDate(today.getUTCDate() - 1);
+
+        if (lastActiveDate.getTime() === yesterday.getTime()) {
             this.streak.count++;
         } else {
             this.streak.count = 1;
@@ -54,6 +57,7 @@ userSchema.methods.updateStreak = async function () {
         this.streak.longest = Math.max(this.streak.longest, this.streak.count);
     } else {
         this.streak.count = 1;
+        this.streak.longest = this.streak.count;
     }
 
     this.streak.lastActive = today;
