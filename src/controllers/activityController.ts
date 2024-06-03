@@ -25,8 +25,8 @@ export const logUserActivity = async (req: Request, res: Response) => {
         }
 
         await createActivityLog(challengeId, user.id, rating);
-        user.updateStreak();
-        user.updateRating(rating);
+        await user.updateStreak();
+        await user.updateRating(rating);
 
         return res
             .status(201)

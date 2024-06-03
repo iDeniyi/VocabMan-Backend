@@ -15,7 +15,7 @@ export const createActivityLog = async (
     challengeId: string,
     userId: string,
     rating: number
-): Promise<IActivityLog> => {
+) => {
     const newActivity = new ActivityLog({
         dailyChallengeId: challengeId,
         userId,
@@ -23,7 +23,6 @@ export const createActivityLog = async (
         date: new Date().toISOString(),
     });
     await newActivity.save();
-    return newActivity;
 };
 
 export const updateNewWordFlag = async (
